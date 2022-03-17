@@ -18,6 +18,18 @@ func (interactor *UserInteractor) Add(u model.User) (user model.User, err error)
 	return
 }
 
+func (interactor *UserInteractor) UserUpdate(u model.UpdateUser) (user model.User, err error) {
+	err = interactor.UserRepository.UpdateSelf(u)
+	if err != nil {
+		return
+	}
+	user, err = interactor.UserRepository.FindById(u.ID)
+	if err != nil {
+		return
+	}
+	return
+}
+
 func (interactor *UserInteractor) Users() (user []*model.User, err error) {
 	user, err = interactor.UserRepository.FindAll()
 	return

@@ -56,14 +56,14 @@ func (controller *UserController) Show(c Context) {
 }
 
 func (controller *UserController) Update(c Context) {
-	u := model.User{}
+	u := model.UpdateUser{}
 	err := c.Bind(&u)
 	if err != nil {
 		c.JSON(500, NewError(err))
 		return
 	}
 
-	user, err := controller.Interactor.Add(u)
+	user, err := controller.Interactor.UserUpdate(u)
 	if err != nil {
 		c.JSON(500, NewError(err))
 		return

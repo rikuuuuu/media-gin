@@ -10,22 +10,22 @@ type ArticleRepository struct {
 	FirestoreHandler
 }
 
-func (repo *ArticleRepository) CreateByUser(a model.Article) error {
+func (repo *ArticleRepository) CreateByUser(a model.Article) (id string, err error) {
 	ctx := context.Background()
 
 	mapData, err := utils.StructToMap(a)
 	if err != nil {
-		return err
+		return
 	}
 
-	err = repo.New(ctx, articles_table_name, mapData)
+	id, err = repo.New(ctx, articles_table_name, mapData)
 	if err != nil {
-		return err
+		return
 	}
-	return nil
+	return
 }
 
-func (repo *ArticleRepository) UpdateByUser(a model.Article) error {
+func (repo *ArticleRepository) UpdateByUser(a model.UpdateArticle) error {
 	ctx := context.Background()
 
 	mapData, err := utils.StructToMap(a)
