@@ -3,6 +3,9 @@ module media-gin
 go 1.16
 
 require (
+	cloud.google.com/go/firestore v1.6.1
+	cloud.google.com/go/iam v0.3.0 // indirect
+	firebase.google.com/go v3.13.0+incompatible // indirect
 	github.com/gin-gonic/gin v1.7.7 // indirect
 	github.com/go-playground/validator/v10 v10.10.1 // indirect
 	github.com/golang/protobuf v1.5.2 // indirect
@@ -12,6 +15,7 @@ require (
 	github.com/ugorji/go v1.2.7 // indirect
 	golang.org/x/crypto v0.0.0-20220315160706-3147a52a75dd // indirect
 	golang.org/x/sys v0.0.0-20220315194320-039c03cc5b86 // indirect
+	google.golang.org/api v0.73.0 // indirect
 	google.golang.org/protobuf v1.27.1 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 )

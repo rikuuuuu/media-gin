@@ -4,19 +4,17 @@ import (
 	"media-gin/app/domain/model"
 	"media-gin/app/interfaces/database"
 	"media-gin/app/usecase"
-	"strconv"
 )
 
 type UserController struct {
 	Interactor usecase.UserInteractor
 }
 
-// sqlHandler database.SqlHandler
-func NewUserController() *UserController {
+func NewUserController(handler database.FirestoreHandler) *UserController {
 	return &UserController{
 		Interactor: usecase.UserInteractor{
 			UserRepository: &database.UserRepository{
-				// SqlHandler: sqlHandler,
+				FirestoreHandler: handler,
 			},
 		},
 	}
@@ -24,7 +22,12 @@ func NewUserController() *UserController {
 
 func (controller *UserController) Create(c Context) {
 	u := model.User{}
-	c.Bind(&u)
+	err := c.Bind(&u)
+	if err != nil {
+		c.JSON(500, NewError(err))
+		return
+	}
+
 	user, err := controller.Interactor.Add(u)
 	if err != nil {
 		c.JSON(500, NewError(err))
@@ -43,11 +46,37 @@ func (controller *UserController) Index(c Context) {
 }
 
 func (controller *UserController) Show(c Context) {
-	id, _ := strconv.Atoi(c.Param("id"))
+	id := c.Param("id")
 	user, err := controller.Interactor.UserById(id)
 	if err != nil {
 		c.JSON(500, NewError(err))
 		return
 	}
 	c.JSON(200, user)
+}
+
+func (controller *UserController) Update(c Context) {
+	u := model.User{}
+	err := c.Bind(&u)
+	if err != nil {
+		c.JSON(500, NewError(err))
+		return
+	}
+
+	user, err := controller.Interactor.Add(u)
+	if err != nil {
+		c.JSON(500, NewError(err))
+		return
+	}
+	c.JSON(201, user)
+}
+
+func (controller *UserController) Delete(c Context) {
+	id := c.Param("id")
+	err := controller.Interactor.DeleteUserById(id)
+	if err != nil {
+		c.JSON(500, NewError(err))
+		return
+	}
+	c.JSON(200, nil)
 }

@@ -1,62 +1,74 @@
 package database
 
-import "media-gin/app/domain/model"
+import (
+	"context"
+	"media-gin/app/domain/model"
+	"media-gin/app/utils"
+)
 
 type UserRepository struct {
-	SqlHandler
+	FirestoreHandler
 }
 
-func (repo *UserRepository) Store(u model.User) (id int, err error) {
-	result, err := repo.Execute(
-		"INSERT INTO users (first_name, last_name) VALUES (?,?)", u.Name,
-	)
+func (repo *UserRepository) Add(u model.User) error {
+	ctx := context.Background()
+
+	mapData, err := utils.StructToMap(u)
 	if err != nil {
-		return
+		return err
 	}
-	id64, err := result.LastInsertId()
+
+	err = repo.Set(ctx, "users", u.ID, mapData)
 	if err != nil {
-		return
+		return err
 	}
-	id = int(id64)
+	return nil
+}
+
+func (repo *UserRepository) FindById(identifier string) (user model.User, err error) {
+	ctx := context.Background()
+
+	res, err := repo.Get(ctx, "users", identifier)
+	if err != nil {
+		return user, err
+	}
+
+	err = utils.MapToStruct(res, &user)
+	if err != nil {
+		return user, err
+	}
+
 	return
 }
 
-func (repo *UserRepository) FindById(identifier int) (user model.User, err error) {
-	// row, err := repo.Query("SELECT id, first_name, last_name FROM users WHERE id = ?", identifier)
-	// defer row.Close()
-	// if err != nil {
-	// 	return
-	// }
-	// var id int
-	// var name string
-	// row.Next()
-	// if err = row.Scan(&id, &name); err != nil {
-	// 	return
-	// }
-	user.ID = identifier
-	user.Name = "test_name"
-	user.Email = "test_email"
-	user.Build()
+func (repo *UserRepository) FindAll() (users []*model.User, err error) {
+	ctx := context.Background()
+
+	res, err := repo.GetAll(ctx, "users")
+	if err != nil {
+		return nil, err
+	}
+
+	users = make([]*model.User, 0, len(res))
+	for _, r := range res {
+		u := new(model.User)
+		err = utils.MapToStruct(r, &u)
+		if err != nil {
+			return nil, err
+		}
+		users = append(users, u)
+	}
+
 	return
 }
 
-func (repo *UserRepository) FindAll() (users model.Users, err error) {
-	rows, err := repo.Query("SELECT id, first_name, last_name FROM users")
-	defer rows.Close()
+func (repo *UserRepository) DeleteById(identifier string) (err error) {
+	ctx := context.Background()
+
+	err = repo.Delete(ctx, "users", identifier)
 	if err != nil {
 		return
 	}
-	for rows.Next() {
-		var id int
-		var name string
-		if err := rows.Scan(&id, &name); err != nil {
-			continue
-		}
-		user := model.User{
-			ID:   id,
-			Name: name,
-		}
-		users = append(users, *user.Build())
-	}
+
 	return
 }

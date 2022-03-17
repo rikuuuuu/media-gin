@@ -3,7 +3,8 @@ package usecase
 import "media-gin/app/domain/model"
 
 type UserRepository interface {
-	Store(model.User) (int, error)
-	FindById(int) (model.User, error)
-	FindAll() (model.Users, error)
+	Add(model.User) error
+	FindById(string) (model.User, error)
+	FindAll() ([]*model.User, error)
+	DeleteById(string) error
 }

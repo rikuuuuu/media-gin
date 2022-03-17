@@ -7,20 +7,28 @@ type UserInteractor struct {
 }
 
 func (interactor *UserInteractor) Add(u model.User) (user model.User, err error) {
-	identifier, err := interactor.UserRepository.Store(u)
+	err = interactor.UserRepository.Add(u)
 	if err != nil {
 		return
 	}
-	user, err = interactor.UserRepository.FindById(identifier)
+	user, err = interactor.UserRepository.FindById(u.ID)
+	if err != nil {
+		return
+	}
 	return
 }
 
-func (interactor *UserInteractor) Users() (user model.Users, err error) {
+func (interactor *UserInteractor) Users() (user []*model.User, err error) {
 	user, err = interactor.UserRepository.FindAll()
 	return
 }
 
-func (interactor *UserInteractor) UserById(identifier int) (user model.User, err error) {
+func (interactor *UserInteractor) UserById(identifier string) (user model.User, err error) {
 	user, err = interactor.UserRepository.FindById(identifier)
+	return
+}
+
+func (interactor *UserInteractor) DeleteUserById(identifier string) (err error) {
+	err = interactor.UserRepository.DeleteById(identifier)
 	return
 }
