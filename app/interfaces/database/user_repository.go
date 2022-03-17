@@ -18,7 +18,7 @@ func (repo *UserRepository) Add(u model.User) error {
 		return err
 	}
 
-	err = repo.Set(ctx, "users", u.ID, mapData)
+	err = repo.Set(ctx, users_table_name, u.ID, mapData)
 	if err != nil {
 		return err
 	}
@@ -28,7 +28,7 @@ func (repo *UserRepository) Add(u model.User) error {
 func (repo *UserRepository) FindById(identifier string) (user model.User, err error) {
 	ctx := context.Background()
 
-	res, err := repo.Get(ctx, "users", identifier)
+	res, err := repo.Get(ctx, users_table_name, identifier)
 	if err != nil {
 		return user, err
 	}
@@ -44,7 +44,7 @@ func (repo *UserRepository) FindById(identifier string) (user model.User, err er
 func (repo *UserRepository) FindAll() (users []*model.User, err error) {
 	ctx := context.Background()
 
-	res, err := repo.GetAll(ctx, "users")
+	res, err := repo.GetAll(ctx, users_table_name)
 	if err != nil {
 		return nil, err
 	}
@@ -65,7 +65,7 @@ func (repo *UserRepository) FindAll() (users []*model.User, err error) {
 func (repo *UserRepository) DeleteById(identifier string) (err error) {
 	ctx := context.Background()
 
-	err = repo.Delete(ctx, "users", identifier)
+	err = repo.Delete(ctx, users_table_name, identifier)
 	if err != nil {
 		return
 	}

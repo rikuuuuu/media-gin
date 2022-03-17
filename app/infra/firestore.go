@@ -81,7 +81,7 @@ func (f *FirestoreHandler) GetAll(ctx context.Context, collection string) (resDa
 }
 
 // Add.. Firestore 追加
-func (f *FirestoreHandler) Add(ctx context.Context, collection string, doc string, args ...interface{}) error {
+func (f *FirestoreHandler) New(ctx context.Context, collection string, args map[string]interface{}) error {
 
 	client, err := firebaseInit(ctx)
 	if err != nil {
@@ -89,6 +89,7 @@ func (f *FirestoreHandler) Add(ctx context.Context, collection string, doc strin
 	}
 
 	ref := client.Collection(collection).NewDoc()
+	args["id"] = ref.ID
 	_, err = ref.Set(ctx, args)
 	if err != nil {
 		log.Fatalf("Failed adding alovelace: %v", err)

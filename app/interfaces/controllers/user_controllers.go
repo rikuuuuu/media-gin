@@ -3,16 +3,16 @@ package controllers
 import (
 	"media-gin/app/domain/model"
 	"media-gin/app/interfaces/database"
-	"media-gin/app/usecase"
+	"media-gin/app/usecase/user"
 )
 
 type UserController struct {
-	Interactor usecase.UserInteractor
+	Interactor user.UserInteractor
 }
 
 func NewUserController(handler database.FirestoreHandler) *UserController {
 	return &UserController{
-		Interactor: usecase.UserInteractor{
+		Interactor: user.UserInteractor{
 			UserRepository: &database.UserRepository{
 				FirestoreHandler: handler,
 			},

@@ -7,7 +7,3 @@ type User struct {
 	Email string `db:"email" form:"email" json:"email" firestore:"email,omitempty"`
 	Name  string `db:"name" form:"name" json:"name" firestore:"name,omitempty"`
 }
-
-func (u *User) Build() *User {
-	return u
-}

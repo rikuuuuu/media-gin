@@ -1,4 +1,4 @@
-package usecase
+package user
 
 import "media-gin/app/domain/model"
 
