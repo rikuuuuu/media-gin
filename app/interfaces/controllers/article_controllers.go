@@ -56,7 +56,7 @@ func (controller *ArticleController) Show(c Context) {
 }
 
 func (controller *ArticleController) Update(c Context) {
-	a := model.Article{}
+	a := model.UpdateArticle{}
 	err := c.Bind(&a)
 	if err != nil {
 		c.JSON(500, NewError(err))

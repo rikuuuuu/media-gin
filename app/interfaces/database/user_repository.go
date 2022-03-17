@@ -25,6 +25,21 @@ func (repo *UserRepository) Add(u model.User) error {
 	return nil
 }
 
+func (repo *UserRepository) UpdateSelf(u model.UpdateUser) error {
+	ctx := context.Background()
+
+	mapData, err := utils.StructToMap(u)
+	if err != nil {
+		return err
+	}
+
+	err = repo.Set(ctx, users_table_name, u.ID, mapData)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 func (repo *UserRepository) FindById(identifier string) (user model.User, err error) {
 	ctx := context.Background()
 

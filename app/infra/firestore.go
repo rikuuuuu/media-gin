@@ -17,6 +17,11 @@ func NewFirestoreHandler() database.FirestoreHandler {
 	return firestoreHandler
 }
 
+const (
+	created_at = "created_at"
+	updated_at = "updated_at"
+)
+
 // firebaseInit.. Firebase初期化メソッド
 func firebaseInit(ctx context.Context) (client *firestore.Client, err error) {
 
@@ -81,21 +86,27 @@ func (f *FirestoreHandler) GetAll(ctx context.Context, collection string) (resDa
 }
 
 // Add.. Firestore 追加
-func (f *FirestoreHandler) New(ctx context.Context, collection string, args map[string]interface{}) error {
+func (f *FirestoreHandler) New(ctx context.Context, collection string, args map[string]interface{}) (id string, err error) {
 
 	client, err := firebaseInit(ctx)
 	if err != nil {
-		return err
+		return
 	}
 
 	ref := client.Collection(collection).NewDoc()
+
+	id = ref.ID
+
 	args["id"] = ref.ID
+	args[created_at] = firestore.ServerTimestamp
+	args[updated_at] = firestore.ServerTimestamp
+	
 	_, err = ref.Set(ctx, args)
 	if err != nil {
 		log.Fatalf("Failed adding alovelace: %v", err)
 	}
 	defer client.Close()
-	return nil
+	return
 }
 
 // Set.. Firestore 追加または上書き
@@ -106,7 +117,14 @@ func (f *FirestoreHandler) Set(ctx context.Context, collection string, doc strin
 		return err
 	}
 
-	_, err = client.Collection(collection).Doc(doc).Set(ctx, args)
+	// updateの際には createatがない状態, createの際には createdatがある状態で渡ってくる
+	if args[created_at] != nil {
+		args[created_at] = firestore.ServerTimestamp
+	}
+
+	args[updated_at] = firestore.ServerTimestamp
+
+	_, err = client.Collection(collection).Doc(doc).Set(ctx, args, firestore.MergeAll)
 	if err != nil {
 		log.Fatal(err)
 		return err
