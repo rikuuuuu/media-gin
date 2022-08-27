@@ -85,6 +85,28 @@ func (f *FirestoreHandler) GetAll(ctx context.Context, collection string) (resDa
 	return
 }
 
+// GetAllWithPage.. Firestore ページ数で取得
+func (f *FirestoreHandler) GetAllWithPage(ctx context.Context, collection string, offset int, limit int) (resData []map[string]interface{}, err error) {
+
+	client, err := firebaseInit(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	allData := client.Collection(collection).Offset(offset).Limit(limit).Documents(ctx)
+	docs, err := allData.GetAll()
+	if err != nil {
+		log.Fatalf("Failed adding getAll: %v", err)
+	}
+
+	for _, doc := range docs {
+		resData = append(resData, doc.Data())
+	}
+
+	defer client.Close()
+	return
+}
+
 // Add.. Firestore 追加
 func (f *FirestoreHandler) New(ctx context.Context, collection string, args map[string]interface{}) (id string, err error) {
 
@@ -100,7 +122,7 @@ func (f *FirestoreHandler) New(ctx context.Context, collection string, args map[
 	args["id"] = ref.ID
 	args[created_at] = firestore.ServerTimestamp
 	args[updated_at] = firestore.ServerTimestamp
-	
+
 	_, err = ref.Set(ctx, args)
 	if err != nil {
 		log.Fatalf("Failed adding alovelace: %v", err)

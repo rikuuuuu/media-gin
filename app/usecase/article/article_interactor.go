@@ -16,7 +16,7 @@ func (interactor *ArticleInteractor) Add(a model.Article) (article model.Article
 	if err != nil {
 		return
 	}
-	
+
 	return
 }
 
