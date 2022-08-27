@@ -11,5 +11,5 @@ format:
 	goimports -w $(APPDIR)/infra/*.go
 	goimports -w $(APPDIR)/interfaces/controllers/*.go
 	goimports -w $(APPDIR)/interfaces/database/*.go
-	goimports -w $(APPDIR)/usecase/*.go
+	goimports -w $(APPDIR)/usecase/*/*.go
 	goimports -w $(APPDIR)/utils/*.go

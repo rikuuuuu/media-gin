@@ -14,6 +14,8 @@ func init() {
 	userController := controllers.NewUserController(NewFirestoreHandler())
 	articleController := controllers.NewArticleController(NewFirestoreHandler())
 
+	router.GET("/", func(c *gin.Context) { c.JSON(200, "Hellow World!") })
+
 	// user
 	router.GET("/users", func(c *gin.Context) { userController.Index(c) })
 	router.GET("/user/:id", func(c *gin.Context) { userController.Show(c) })
