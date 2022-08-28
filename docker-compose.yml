@@ -1,0 +1,35 @@
+version: "3.9"
+
+services:
+  db:
+    image: postgres:latest
+    container_name: postgres_db
+    # volumes:
+    #   - postgres:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: ${POSTGRES_NAME:-app}
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASS:-pass}
+      PGDATA: /data/postgres
+      POSTGRES_HOST_AUTH_METHOD: "trust"
+    ports:
+      - ${POSTGRES_DOCKER_PORT:-5432}:5432
+    networks: 
+      - api-server
+
+  gin_server: 
+    build: 
+      context: .
+    container_name: gin_server
+    ports:
+      - 8080:8080
+    depends_on:
+      - db
+    networks:
+      - api-server
+    volumes:
+      - ./app:/app/app
+
+networks:
+  api-server:
+    driver: bridge

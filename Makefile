@@ -4,6 +4,10 @@ PHONY: run
 run:
 	go run $(APPDIR)/server.go
 
+PHONY: docker_run
+docker_run:
+	docker-compose up --build
+
 PHONY: format
 format:
 	goimports -w $(APPDIR)/*.go
